@@ -20,8 +20,7 @@ class SocialController extends Controller
         $user = Socialite::driver('vkontakte')->user();
 
         $objSocial = new SocialService();
-        if($objSocial->saveSocialData($user))
-        {
+        if ($objSocial->saveSocialData($user)) {
             return redirect()->route('hall');
         }
 

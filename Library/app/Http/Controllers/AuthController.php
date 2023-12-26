@@ -16,13 +16,9 @@ class AuthController extends Controller
     public function login(Request $request)
     {
 
-        if(!Auth::attempt($request->only('email','password'), $request->has('remember')))
-        {
-            var_dump($request);
+        if (!Auth::attempt($request->only('email', 'password'), $request->has('remember'))) {
             return "Неправильный логин или пароль";
-        }
-
-        else{
+        } else {
             return redirect()->route('book-getBook');
         }
     }
@@ -56,7 +52,7 @@ class AuthController extends Controller
 
     public function showForgetPasswordForm()
     {
-       return view('password.forgot');
+        return view('password.forgot');
     }
 
     /**
@@ -76,17 +72,18 @@ class AuthController extends Controller
             'email' => $request->email,
             'token' => $token,
             'created_at' => Carbon::now()
-          ]);
+        ]);
 
-          return redirect()->route('reset.password.get', $token);
+        return redirect()->route('reset.password.get', $token);
     }
     /**
      * Write code on Method
      *
      * @return response()
      */
-    public function showResetPasswordForm($token) {
-       return view('password.forgot-link', ['token' => $token]);
+    public function showResetPasswordForm($token)
+    {
+        return view('password.forgot-link', ['token' => $token]);
     }
 
     /**
@@ -102,20 +99,20 @@ class AuthController extends Controller
         ]);
 
         $updatePassword = DB::table('password_reset_tokens')
-                            ->where([
-                              'email' => $request->email,
-                              'token' => $request->token
-                            ])
-                            ->first();
+            ->where([
+                'email' => $request->email,
+                'token' => $request->token
+            ])
+            ->first();
 
-        if(!$updatePassword){
+        if (!$updatePassword) {
             return back()->withInput()->with('error', 'Invalid token!');
         }
 
         $user = User::where('email', $request->email)
-                    ->update(['password' => Hash::make($request->password)]);
+            ->update(['password' => Hash::make($request->password)]);
 
-        DB::table('password_reset_tokens')->where(['email'=> $request->email])->delete();
+        DB::table('password_reset_tokens')->where(['email' => $request->email])->delete();
 
         return redirect('/login')->with('message', 'Ваш пароль был изменён');
     }
